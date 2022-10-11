@@ -27,10 +27,11 @@ def main():
         image_input = tf.expand_dims(tf.cast(image_resize, dtype=tf.int32), axis=0)
         output = movenet(image_input)
         keypoints = output['output_0'].numpy()[:, :, :51].reshape((6, 17, 3))
+        bboxes = output['output_0'].numpy()[:, :, 51:].reshape((6, 5))
 
         height, width, _ = frame.shape
 
-        keypoints_image = draw(keypoints, frame.copy(), (int(width / height * 512), 512), threshold=0.3)
+        keypoints_image = draw(frame.copy(), keypoints, bboxes, result_size=(int(width / height * 512), 512), threshold=0.3)
         print(keypoints_image.shape)
 
         cv2.imshow('Camera Test', keypoints_image)
