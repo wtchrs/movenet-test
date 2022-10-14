@@ -1,14 +1,12 @@
 import cv2
-import tensorflow as tf
-import tensorflow_hub as hub
 import sys
 import time
 from lib.draw import draw
+from lib.inference import load_movenet, forwarding_movenet, split_keypoints_bboxes
 
 
 def main():
-    model = hub.load('https://tfhub.dev/google/movenet/multipose/lightning/1')
-    movenet = model.signatures['serving_default']
+    movenet = load_movenet()
 
     cap = cv2.VideoCapture(0)
     if not cap.isOpened():
@@ -22,17 +20,10 @@ def main():
         if not ret:
             break
 
-        image_resize = tf.image.resize_with_pad(frame, 256, 256)
-
-        image_input = tf.expand_dims(tf.cast(image_resize, dtype=tf.int32), axis=0)
-        output = movenet(image_input)
-        keypoints = output['output_0'].numpy()[:, :, :51].reshape((6, 17, 3))
-        bboxes = output['output_0'].numpy()[:, :, 51:].reshape((6, 5))
-
         height, width, _ = frame.shape
-
-        keypoints_image = draw(frame.copy(), keypoints, bboxes, result_size=(int(width / height * 512), 512), threshold=0.3)
-        print(keypoints_image.shape)
+        keypoints, bboxes = split_keypoints_bboxes(forwarding_movenet(movenet, frame))
+        keypoints_image = draw(frame.copy(), keypoints, bboxes, result_size=(int(width / height * 512), 512),
+                               threshold=0.3)
 
         cv2.imshow('Camera Test', keypoints_image)
 
@@ -41,7 +32,7 @@ def main():
 
         time_taken_in_ms = (time.time_ns() - start) / 1_000_000
         fps = 1_000 / time_taken_in_ms
-        print(f'Inference Time: {time_taken_in_ms: >6f} ms, FPS: {fps: >6f}')
+        print(f'\rInference Time: {time_taken_in_ms: .2f} ms, FPS: {fps: .2f}', end='')
 
     cap.release()
 
