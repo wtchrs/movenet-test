@@ -11,6 +11,7 @@ Requirements:
 - tensorflow-hub
 - opencv-python
 - numpy
+- cuda, cudnn (in case of using nvidia gpu)
 
 Just run following command to get above packages:
 
