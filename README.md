@@ -29,10 +29,16 @@ Or, using requirements.txt:
 pip install -r requirements.txt
 ```
 
-And now you can run the following command.
+And now you can run the following command(with webcam).
 
 ```sh
-python src/movenet-test-webcam.py
+python src/stop-dumping.py
+```
+
+Or with RTSP video.
+
+```sh
+python src/stop-dumping.py -u rtsp://your-rtsp-url.com:554
 ```
 
 [movenet]: https://blog.tensorflow.org/2021/05/next-generation-pose-detection-with-movenet-and-tensorflowjs.html
