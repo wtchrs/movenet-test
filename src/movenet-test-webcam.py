@@ -1,8 +1,11 @@
-import cv2
+import os
 import sys
+import cv2
 import time
 from lib.draw import draw
 from lib.inference import load_movenet, forwarding_movenet, split_keypoints_bboxes
+
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
 
 def main():

@@ -5,10 +5,12 @@ import numpy as np
 from .colors import EDGE_COLORS
 
 
-def draw(image, keypoints_out, bbox_out=None, result_size=None, threshold=0.11):
+def draw(image, keypoints_out=None, bbox_out=None, result_size=None, threshold=0.11):
     origin_shape = image.shape
     if bbox_out is None:
         bbox_out = []
+    if keypoints_out is None:
+        keypoints_out = []
     if result_size is not None:
         image = cv2.resize(image, result_size)
     for instance, bbox in itertools.zip_longest(keypoints_out, bbox_out):
@@ -17,9 +19,28 @@ def draw(image, keypoints_out, bbox_out=None, result_size=None, threshold=0.11):
                 continue
             denormalized_bbox = get_denormalized_bbox(bbox, image.shape, origin_shape[1] / origin_shape[0])
             draw_bbox(image, denormalized_bbox, threshold=threshold)
-        denormalized_coordinate = get_denormalized(instance, image.shape, origin_shape[1] / origin_shape[0])
-        draw_edges(image, denormalized_coordinate, EDGE_COLORS, threshold)
-        draw_keypoints(image, denormalized_coordinate, threshold=threshold)
+        if instance is not None:
+            denormalized_coordinate = get_denormalized(instance, image.shape, origin_shape[1] / origin_shape[0])
+            draw_edges(image, denormalized_coordinate, EDGE_COLORS, threshold)
+            draw_keypoints(image, denormalized_coordinate, threshold=threshold)
+    return image
+
+
+def draw_with_denormalized(image, keypoints_out=None, bbox_out=None, result_size=None, threshold=0.11):
+    if bbox_out is None:
+        bbox_out = []
+    if keypoints_out is None:
+        keypoints_out = []
+    if result_size is not None:
+        image = cv2.resize(image, result_size)
+    for instance, bbox in itertools.zip_longest(keypoints_out, bbox_out):
+        if bbox is not None:
+            if bbox[4] < threshold:
+                continue
+            draw_bbox(image, bbox, threshold=threshold)
+        if instance is not None:
+            draw_edges(image, instance, EDGE_COLORS, threshold)
+            draw_keypoints(image, instance, threshold=threshold)
     return image
 
 

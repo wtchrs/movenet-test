@@ -7,6 +7,7 @@ def load_movenet():
     return model.signatures['serving_default']
 
 
+
 def forwarding_movenet(movenet, image):
     image_resize = tf.image.resize_with_pad(image, 256, 256)
 

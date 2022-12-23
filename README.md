@@ -11,12 +11,16 @@ Requirements:
 - tensorflow-hub
 - opencv-python
 - numpy
+- pandas
+- matplotlib
+- scikit-learn
+- pygame
 - cuda, cudnn (in case of using nvidia gpu)
 
 Just run following command to get above packages:
 
 ```sh
-pip install tensorflow tensorflow-hub opencv-python numpy
+pip install tensorflow tensorflow-hub opencv-python numpy pandas matplotlib scikit-learn pygame
 ```
 
 Or, using requirements.txt:
